@@ -617,6 +617,7 @@ function Main() {
   const [delVideo, setDelVideo] = useState(null);
   const profileUsername = useMemo(() => new URLSearchParams(window.location.search).get("profile"), []);
   const [myProfileOpen, setMyProfileOpen] = useState(false);
+  const showingProfile = !!profileUsername || myProfileOpen && user;
   const filtered = useMemo(() => {
     if (!query.trim()) return videos;
     const q = query.toLowerCase();
@@ -657,118 +658,119 @@ function Main() {
       false,
       {
         fileName: "<stdin>",
-        lineNumber: 324,
+        lineNumber: 325,
         columnNumber: 7
       },
       this
     ),
-    profileUsername ? /* @__PURE__ */ jsxDEV(ProfileView, { username: profileUsername, onBack: () => {
-      const base = window.baseUrl || window.location.origin + window.location.pathname;
-      window.location.href = base;
-    } }, void 0, false, {
-      fileName: "<stdin>",
-      lineNumber: 334,
-      columnNumber: 9
-    }, this) : /* @__PURE__ */ jsxDEV("div", { className: "container", children: [
+    showingProfile ? /* @__PURE__ */ jsxDEV(
+      ProfileView,
+      {
+        username: profileUsername || user.username,
+        onBack: () => {
+          if (profileUsername) {
+            const base = window.baseUrl || window.location.origin + window.location.pathname;
+            window.location.href = base;
+          } else {
+            setMyProfileOpen(false);
+          }
+        }
+      },
+      void 0,
+      false,
+      {
+        fileName: "<stdin>",
+        lineNumber: 335,
+        columnNumber: 9
+      },
+      this
+    ) : /* @__PURE__ */ jsxDEV("div", { className: "container", children: [
       /* @__PURE__ */ jsxDEV("div", { className: "section", children: [
         /* @__PURE__ */ jsxDEV("h2", { className: "h2", children: "Regular Videos" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 338,
+          lineNumber: 349,
           columnNumber: 13
         }, this),
         loading ? /* @__PURE__ */ jsxDEV("div", { className: "small", children: "Loading\u2026" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 339,
+          lineNumber: 350,
           columnNumber: 24
         }, this) : /* @__PURE__ */ jsxDEV("div", { className: "card-grid", children: regular.map(
           (v) => /* @__PURE__ */ jsxDEV(VideoCard, { v, canEdit: user && user.id === v.user_id, onEdit: setEditVideo, onDelete }, v.id, false, {
             fileName: "<stdin>",
-            lineNumber: 342,
+            lineNumber: 353,
             columnNumber: 19
           }, this)
         ) }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 340,
+          lineNumber: 351,
           columnNumber: 15
         }, this)
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 337,
+        lineNumber: 348,
         columnNumber: 11
       }, this),
       /* @__PURE__ */ jsxDEV("div", { className: "section", children: [
         /* @__PURE__ */ jsxDEV("h2", { className: "h2", children: "Shorts" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 347,
+          lineNumber: 358,
           columnNumber: 13
         }, this),
         loading ? /* @__PURE__ */ jsxDEV("div", { className: "small", children: "Loading\u2026" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 348,
+          lineNumber: 359,
           columnNumber: 24
         }, this) : /* @__PURE__ */ jsxDEV("div", { className: "card-grid", children: shorts.map(
           (v) => /* @__PURE__ */ jsxDEV(VideoCard, { v, canEdit: user && user.id === v.user_id, onEdit: setEditVideo, onDelete }, v.id, false, {
             fileName: "<stdin>",
-            lineNumber: 351,
+            lineNumber: 362,
             columnNumber: 19
           }, this)
         ) }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 349,
+          lineNumber: 360,
           columnNumber: 15
         }, this)
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 346,
+        lineNumber: 357,
         columnNumber: 11
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 336,
-      columnNumber: 9
-    }, this),
-    myProfileOpen && user && /* @__PURE__ */ jsxDEV("div", { className: "modal-backdrop", onClick: () => setMyProfileOpen(false), children: /* @__PURE__ */ jsxDEV("div", { className: "modal modal-xl", onClick: (e) => e.stopPropagation(), children: /* @__PURE__ */ jsxDEV(ProfileView, { username: user.username, onBack: () => setMyProfileOpen(false) }, void 0, false, {
-      fileName: "<stdin>",
-      lineNumber: 360,
-      columnNumber: 13
-    }, this) }, void 0, false, {
-      fileName: "<stdin>",
-      lineNumber: 359,
-      columnNumber: 11
-    }, this) }, void 0, false, {
-      fileName: "<stdin>",
-      lineNumber: 358,
+      lineNumber: 347,
       columnNumber: 9
     }, this),
     /* @__PURE__ */ jsxDEV(UploadModal, { open: showUpload, onClose: () => setShowUpload(false) }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 364,
+      lineNumber: 368,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ jsxDEV(ProfileModal, { open: showProfile, onClose: () => setShowProfile(false) }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 365,
+      lineNumber: 369,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ jsxDEV(EditVideoModal, { open: !!editVideo, onClose: () => setEditVideo(null), video: editVideo }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 366,
+      lineNumber: 370,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ jsxDEV(DeleteConfirmModal, { open: !!delVideo, onClose: () => setDelVideo(null), onConfirm: confirmDelete, title: delVideo?.title }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 367,
+      lineNumber: 371,
       columnNumber: 7
     }, this)
   ] }, void 0, true, {
     fileName: "<stdin>",
-    lineNumber: 323,
+    lineNumber: 324,
     columnNumber: 5
   }, this);
 }
 const root = createRoot(document.getElementById("root"));
 root.render(/* @__PURE__ */ jsxDEV(Main, {}, void 0, false, {
   fileName: "<stdin>",
-  lineNumber: 373,
+  lineNumber: 377,
   columnNumber: 13
 }));
