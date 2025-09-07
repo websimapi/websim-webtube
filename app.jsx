@@ -511,92 +511,218 @@ function ProfileView({ username, onBack }) {
   const { data: vids = [], loading } = useQuery(userId ? room.collection("videos").filter({ user_id: userId }) : null);
   const p = prof && prof[0];
   const [editOpen, setEditOpen] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [nameDraft, setNameDraft] = useState("");
+  const [bioDraft, setBioDraft] = useState("");
+  const [vidDrafts, setVidDrafts] = useState([]);
+  const [draggingId, setDraggingId] = useState(null);
+  useEffect(() => {
+    if (p && !editMode) {
+      setNameDraft(p.display_name || username);
+      setBioDraft(p.bio || "");
+    }
+  }, [p, username, editMode]);
+  useEffect(() => {
+    if (vids && !editMode) {
+      const order = p?.channel?.video_order || [];
+      const map = new Map(order.map((id, i) => [id, i]));
+      const sorted = [...vids].sort((a, b) => (map.has(a.id) ? map.get(a.id) : 1e9) - (map.has(b.id) ? map.get(b.id) : 1e9));
+      setVidDrafts(sorted.map((v) => ({ id: v.id, title: v.title || "", description: v.description || "", orig: v })));
+    }
+  }, [vids, p, editMode]);
+  const onDragStart = (id) => setDraggingId(id);
+  const onDragOver = (e) => e.preventDefault();
+  const onDrop = (id) => {
+    if (!draggingId || draggingId === id) return;
+    const next = [...vidDrafts];
+    const from = next.findIndex((v) => v.id === draggingId);
+    const to = next.findIndex((v) => v.id === id);
+    const [m] = next.splice(from, 1);
+    next.splice(to, 0, m);
+    setVidDrafts(next);
+    setDraggingId(null);
+  };
+  const saveAll = async () => {
+    if (!current || current.id !== userId) return;
+    await room.collection("profiles").upsert({
+      id: current.id,
+      display_name: nameDraft.trim() || username,
+      bio: bioDraft,
+      channel: { ...p?.channel || {}, video_order: vidDrafts.map((v) => v.id), updated_at: (/* @__PURE__ */ new Date()).toISOString() }
+    });
+    for (const v of vidDrafts) {
+      if (v.title !== v.orig.title || (v.description || "") !== (v.orig.description || "")) {
+        await room.collection("videos").upsert({ id: v.id, title: v.title.trim(), description: v.description || "" });
+      }
+    }
+    setEditMode(false);
+  };
+  const cancelAll = () => {
+    setEditMode(false);
+  };
   return /* @__PURE__ */ jsxDEV("div", { className: "container", children: [
-    /* @__PURE__ */ jsxDEV("div", { className: "row", style: { justifyContent: "space-between", marginBottom: 16 }, children: /* @__PURE__ */ jsxDEV("div", { className: "row", style: { gap: 12 }, children: [
-      /* @__PURE__ */ jsxDEV("img", { src: `https://images.websim.com/avatar/${username}`, alt: "", width: "56", height: "56", style: { borderRadius: 12, border: "1px solid var(--border)" } }, void 0, false, {
-        fileName: "<stdin>",
-        lineNumber: 256,
-        columnNumber: 11
-      }, this),
-      /* @__PURE__ */ jsxDEV("div", { children: [
-        /* @__PURE__ */ jsxDEV("div", { style: { fontWeight: 700 }, children: p?.display_name || username }, void 0, false, {
+    /* @__PURE__ */ jsxDEV("div", { className: "row", style: { justifyContent: "space-between", marginBottom: 16 }, children: [
+      /* @__PURE__ */ jsxDEV("div", { className: "row", style: { gap: 12 }, children: [
+        /* @__PURE__ */ jsxDEV("img", { src: `https://images.websim.com/avatar/${username}`, alt: "", width: "56", height: "56", style: { borderRadius: 12, border: "1px solid var(--border)" } }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 258,
-          columnNumber: 13
+          lineNumber: 301,
+          columnNumber: 11
         }, this),
-        /* @__PURE__ */ jsxDEV("div", { className: "small", children: [
-          "@",
-          username
+        /* @__PURE__ */ jsxDEV("div", { children: editMode ? /* @__PURE__ */ jsxDEV(Fragment, { children: [
+          /* @__PURE__ */ jsxDEV("input", { className: "input", value: nameDraft, onChange: (e) => setNameDraft(e.target.value) }, void 0, false, {
+            fileName: "<stdin>",
+            lineNumber: 305,
+            columnNumber: 17
+          }, this),
+          /* @__PURE__ */ jsxDEV("div", { className: "small", children: [
+            "@",
+            username
+          ] }, void 0, true, {
+            fileName: "<stdin>",
+            lineNumber: 306,
+            columnNumber: 17
+          }, this)
         ] }, void 0, true, {
           fileName: "<stdin>",
-          lineNumber: 259,
-          columnNumber: 13
+          lineNumber: 304,
+          columnNumber: 15
+        }, this) : /* @__PURE__ */ jsxDEV(Fragment, { children: [
+          /* @__PURE__ */ jsxDEV("div", { style: { fontWeight: 700 }, children: p?.display_name || username }, void 0, false, {
+            fileName: "<stdin>",
+            lineNumber: 310,
+            columnNumber: 17
+          }, this),
+          /* @__PURE__ */ jsxDEV("div", { className: "small", children: [
+            "@",
+            username
+          ] }, void 0, true, {
+            fileName: "<stdin>",
+            lineNumber: 311,
+            columnNumber: 17
+          }, this)
+        ] }, void 0, true, {
+          fileName: "<stdin>",
+          lineNumber: 309,
+          columnNumber: 15
+        }, this) }, void 0, false, {
+          fileName: "<stdin>",
+          lineNumber: 302,
+          columnNumber: 11
         }, this)
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 257,
-        columnNumber: 11
-      }, this)
+        lineNumber: 300,
+        columnNumber: 9
+      }, this),
+      current && userId && current.id === userId && (editMode ? /* @__PURE__ */ jsxDEV("div", { className: "group", children: [
+        /* @__PURE__ */ jsxDEV("button", { className: "btn ghost", onClick: cancelAll, children: "Cancel" }, void 0, false, {
+          fileName: "<stdin>",
+          lineNumber: 319,
+          columnNumber: 15
+        }, this),
+        /* @__PURE__ */ jsxDEV("button", { className: "btn", onClick: saveAll, children: "Save Changes" }, void 0, false, {
+          fileName: "<stdin>",
+          lineNumber: 320,
+          columnNumber: 15
+        }, this)
+      ] }, void 0, true, {
+        fileName: "<stdin>",
+        lineNumber: 318,
+        columnNumber: 13
+      }, this) : /* @__PURE__ */ jsxDEV("button", { className: "btn ghost", onClick: () => setEditMode(true), children: "Edit" }, void 0, false, {
+        fileName: "<stdin>",
+        lineNumber: 323,
+        columnNumber: 13
+      }, this))
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 255,
-      columnNumber: 9
-    }, this) }, void 0, false, {
-      fileName: "<stdin>",
-      lineNumber: 254,
+      lineNumber: 299,
       columnNumber: 7
     }, this),
-    p?.bio && /* @__PURE__ */ jsxDEV("p", { className: "small", style: { marginTop: 0 }, children: p.bio }, void 0, false, {
+    editMode ? /* @__PURE__ */ jsxDEV("textarea", { value: bioDraft, onChange: (e) => setBioDraft(e.target.value) }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 263,
-      columnNumber: 18
+      lineNumber: 328,
+      columnNumber: 9
+    }, this) : p?.bio && /* @__PURE__ */ jsxDEV("p", { className: "small", style: { marginTop: 0 }, children: p.bio }, void 0, false, {
+      fileName: "<stdin>",
+      lineNumber: 330,
+      columnNumber: 19
     }, this),
     /* @__PURE__ */ jsxDEV("hr", { className: "hr" }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 264,
+      lineNumber: 332,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ jsxDEV("h2", { className: "h2", children: "Uploads" }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 265,
+      lineNumber: 333,
       columnNumber: 7
     }, this),
     loading ? /* @__PURE__ */ jsxDEV("div", { className: "small", children: "Loading\u2026" }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 266,
+      lineNumber: 334,
       columnNumber: 18
+    }, this) : editMode ? /* @__PURE__ */ jsxDEV("div", { className: "card-grid", children: vidDrafts.map((v) => /* @__PURE__ */ jsxDEV("div", { className: "card drag-card", draggable: true, onDragStart: () => onDragStart(v.id), onDragOver, onDrop: () => onDrop(v.id), children: [
+      /* @__PURE__ */ jsxDEV("div", { className: "thumb", children: /* @__PURE__ */ jsxDEV("span", { className: "small", children: "Drag \u25A6" }, void 0, false, {
+        fileName: "<stdin>",
+        lineNumber: 339,
+        columnNumber: 40
+      }, this) }, void 0, false, {
+        fileName: "<stdin>",
+        lineNumber: 339,
+        columnNumber: 17
+      }, this),
+      /* @__PURE__ */ jsxDEV("div", { className: "meta", children: [
+        /* @__PURE__ */ jsxDEV("input", { className: "input", value: v.title, onChange: (e) => {
+          const t = e.target.value;
+          setVidDrafts((prev) => prev.map((x) => x.id === v.id ? { ...x, title: t } : x));
+        } }, void 0, false, {
+          fileName: "<stdin>",
+          lineNumber: 341,
+          columnNumber: 19
+        }, this),
+        /* @__PURE__ */ jsxDEV("textarea", { value: v.description, onChange: (e) => {
+          const d = e.target.value;
+          setVidDrafts((prev) => prev.map((x) => x.id === v.id ? { ...x, description: d } : x));
+        } }, void 0, false, {
+          fileName: "<stdin>",
+          lineNumber: 344,
+          columnNumber: 19
+        }, this)
+      ] }, void 0, true, {
+        fileName: "<stdin>",
+        lineNumber: 340,
+        columnNumber: 17
+      }, this)
+    ] }, v.id, true, {
+      fileName: "<stdin>",
+      lineNumber: 338,
+      columnNumber: 15
+    }, this)) }, void 0, false, {
+      fileName: "<stdin>",
+      lineNumber: 336,
+      columnNumber: 11
     }, this) : /* @__PURE__ */ jsxDEV("div", { className: "card-grid", children: vids.map(
       (v) => /* @__PURE__ */ jsxDEV(VideoCard, { v, canEdit: current && current.id === v.user_id, onEdit: () => {
       }, onDelete: () => {
       } }, v.id, false, {
         fileName: "<stdin>",
-        lineNumber: 269,
-        columnNumber: 13
+        lineNumber: 354,
+        columnNumber: 15
       }, this)
     ) }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 267,
-      columnNumber: 9
+      lineNumber: 352,
+      columnNumber: 11
     }, this),
-    current && userId && current.id === userId && /* @__PURE__ */ jsxDEV(Fragment, { children: [
-      /* @__PURE__ */ jsxDEV("button", { className: "btn fab", onClick: () => setEditOpen(true), children: "\u270E Edit Profile" }, void 0, false, {
-        fileName: "<stdin>",
-        lineNumber: 274,
-        columnNumber: 11
-      }, this),
-      /* @__PURE__ */ jsxDEV(ProfileModal, { open: editOpen, onClose: () => setEditOpen(false) }, void 0, false, {
-        fileName: "<stdin>",
-        lineNumber: 275,
-        columnNumber: 11
-      }, this)
-    ] }, void 0, true, {
+    current && userId && current.id === userId && /* @__PURE__ */ jsxDEV(Fragment, {}, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 273,
+      lineNumber: 360,
       columnNumber: 9
     }, this)
   ] }, void 0, true, {
     fileName: "<stdin>",
-    lineNumber: 253,
+    lineNumber: 298,
     columnNumber: 5
   }, this);
 }
@@ -659,7 +785,7 @@ function Main() {
       false,
       {
         fileName: "<stdin>",
-        lineNumber: 324,
+        lineNumber: 409,
         columnNumber: 7
       },
       this
@@ -681,7 +807,7 @@ function Main() {
       false,
       {
         fileName: "<stdin>",
-        lineNumber: 342,
+        lineNumber: 427,
         columnNumber: 9
       },
       this
@@ -689,89 +815,89 @@ function Main() {
       /* @__PURE__ */ jsxDEV("div", { className: "section", children: [
         /* @__PURE__ */ jsxDEV("h2", { className: "h2", children: "Regular Videos" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 356,
+          lineNumber: 441,
           columnNumber: 13
         }, this),
         loading ? /* @__PURE__ */ jsxDEV("div", { className: "small", children: "Loading\u2026" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 357,
+          lineNumber: 442,
           columnNumber: 24
         }, this) : /* @__PURE__ */ jsxDEV("div", { className: "card-grid", children: regular.map(
           (v) => /* @__PURE__ */ jsxDEV(VideoCard, { v, canEdit: user && user.id === v.user_id, onEdit: setEditVideo, onDelete }, v.id, false, {
             fileName: "<stdin>",
-            lineNumber: 360,
+            lineNumber: 445,
             columnNumber: 19
           }, this)
         ) }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 358,
+          lineNumber: 443,
           columnNumber: 15
         }, this)
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 355,
+        lineNumber: 440,
         columnNumber: 11
       }, this),
       /* @__PURE__ */ jsxDEV("div", { className: "section", children: [
         /* @__PURE__ */ jsxDEV("h2", { className: "h2", children: "Shorts" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 365,
+          lineNumber: 450,
           columnNumber: 13
         }, this),
         loading ? /* @__PURE__ */ jsxDEV("div", { className: "small", children: "Loading\u2026" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 366,
+          lineNumber: 451,
           columnNumber: 24
         }, this) : /* @__PURE__ */ jsxDEV("div", { className: "card-grid", children: shorts.map(
           (v) => /* @__PURE__ */ jsxDEV(VideoCard, { v, canEdit: user && user.id === v.user_id, onEdit: setEditVideo, onDelete }, v.id, false, {
             fileName: "<stdin>",
-            lineNumber: 369,
+            lineNumber: 454,
             columnNumber: 19
           }, this)
         ) }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 367,
+          lineNumber: 452,
           columnNumber: 15
         }, this)
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 364,
+        lineNumber: 449,
         columnNumber: 11
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 354,
+      lineNumber: 439,
       columnNumber: 9
     }, this),
     /* @__PURE__ */ jsxDEV(UploadModal, { open: showUpload, onClose: () => setShowUpload(false) }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 375,
+      lineNumber: 460,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ jsxDEV(ProfileModal, { open: showProfile, onClose: () => setShowProfile(false) }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 376,
+      lineNumber: 461,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ jsxDEV(EditVideoModal, { open: !!editVideo, onClose: () => setEditVideo(null), video: editVideo }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 377,
+      lineNumber: 462,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ jsxDEV(DeleteConfirmModal, { open: !!delVideo, onClose: () => setDelVideo(null), onConfirm: confirmDelete, title: delVideo?.title }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 378,
+      lineNumber: 463,
       columnNumber: 7
     }, this)
   ] }, void 0, true, {
     fileName: "<stdin>",
-    lineNumber: 323,
+    lineNumber: 408,
     columnNumber: 5
   }, this);
 }
 const root = createRoot(document.getElementById("root"));
 root.render(/* @__PURE__ */ jsxDEV(Main, {}, void 0, false, {
   fileName: "<stdin>",
-  lineNumber: 384,
+  lineNumber: 469,
   columnNumber: 13
 }));

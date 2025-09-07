@@ -30,3 +30,4 @@ textarea, select { width:100%; padding:10px 12px; border:1px solid var(--border)
 .video-el { width:100%; height:auto; display:block; background:#000; }
 .kbd { font-family:ui-monospace, SFMono-Regular, Menlo, monospace; background:#f3f3f3; border:1px solid var(--border); padding:2px 6px; border-radius:6px; font-size:12px; }
 .fab { position:fixed; right:24px; bottom:24px; border-radius:999px; box-shadow:0 6px 20px rgba(0,0,0,.12); z-index:50; padding:12px 16px; }
+.drag-card { outline:1px dashed var(--border); cursor:grab; }
