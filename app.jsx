@@ -616,6 +616,7 @@ function Main() {
   const [editVideo, setEditVideo] = useState(null);
   const [delVideo, setDelVideo] = useState(null);
   const profileUsername = useMemo(() => new URLSearchParams(window.location.search).get("profile"), []);
+  const [myProfileOpen, setMyProfileOpen] = useState(false);
   const filtered = useMemo(() => {
     if (!query.trim()) return videos;
     const q = query.toLowerCase();
@@ -649,15 +650,14 @@ function Main() {
         onOpenUpload: () => setShowUpload(true),
         onOpenProfile: () => {
           if (!user) return;
-          const base = window.baseUrl || window.location.origin + window.location.pathname;
-          window.location.href = `${base}?profile=${encodeURIComponent(user.username)}`;
+          setMyProfileOpen(true);
         }
       },
       void 0,
       false,
       {
         fileName: "<stdin>",
-        lineNumber: 323,
+        lineNumber: 324,
         columnNumber: 7
       },
       this
@@ -727,35 +727,48 @@ function Main() {
       lineNumber: 336,
       columnNumber: 9
     }, this),
+    myProfileOpen && user && /* @__PURE__ */ jsxDEV("div", { className: "modal-backdrop", onClick: () => setMyProfileOpen(false), children: /* @__PURE__ */ jsxDEV("div", { className: "modal modal-xl", onClick: (e) => e.stopPropagation(), children: /* @__PURE__ */ jsxDEV(ProfileView, { username: user.username, onBack: () => setMyProfileOpen(false) }, void 0, false, {
+      fileName: "<stdin>",
+      lineNumber: 360,
+      columnNumber: 13
+    }, this) }, void 0, false, {
+      fileName: "<stdin>",
+      lineNumber: 359,
+      columnNumber: 11
+    }, this) }, void 0, false, {
+      fileName: "<stdin>",
+      lineNumber: 358,
+      columnNumber: 9
+    }, this),
     /* @__PURE__ */ jsxDEV(UploadModal, { open: showUpload, onClose: () => setShowUpload(false) }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 357,
+      lineNumber: 364,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ jsxDEV(ProfileModal, { open: showProfile, onClose: () => setShowProfile(false) }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 358,
+      lineNumber: 365,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ jsxDEV(EditVideoModal, { open: !!editVideo, onClose: () => setEditVideo(null), video: editVideo }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 359,
+      lineNumber: 366,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ jsxDEV(DeleteConfirmModal, { open: !!delVideo, onClose: () => setDelVideo(null), onConfirm: confirmDelete, title: delVideo?.title }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 360,
+      lineNumber: 367,
       columnNumber: 7
     }, this)
   ] }, void 0, true, {
     fileName: "<stdin>",
-    lineNumber: 322,
+    lineNumber: 323,
     columnNumber: 5
   }, this);
 }
 const root = createRoot(document.getElementById("root"));
 root.render(/* @__PURE__ */ jsxDEV(Main, {}, void 0, false, {
   fileName: "<stdin>",
-  lineNumber: 366,
+  lineNumber: 373,
   columnNumber: 13
 }));
