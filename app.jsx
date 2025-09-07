@@ -10,9 +10,9 @@ function useCurrentUser() {
   }, []);
   return u;
 }
-function Header({ query, setQuery, onOpenUpload, onOpenProfile }) {
+function Header({ query, setQuery, onOpenUpload, onOpenProfile, onGoHome }) {
   return /* @__PURE__ */ jsxDEV("div", { className: "head container", children: [
-    /* @__PURE__ */ jsxDEV("div", { className: "brand", children: "WebTube" }, void 0, false, {
+    /* @__PURE__ */ jsxDEV("div", { className: "brand", onClick: onGoHome, children: "WebTube" }, void 0, false, {
       fileName: "<stdin>",
       lineNumber: 16,
       columnNumber: 7
@@ -512,93 +512,86 @@ function ProfileView({ username, onBack }) {
   const p = prof && prof[0];
   const [editOpen, setEditOpen] = useState(false);
   return /* @__PURE__ */ jsxDEV("div", { className: "container", children: [
-    /* @__PURE__ */ jsxDEV("div", { className: "row", style: { justifyContent: "space-between", marginBottom: 16 }, children: [
-      /* @__PURE__ */ jsxDEV("div", { className: "row", style: { gap: 12 }, children: [
-        /* @__PURE__ */ jsxDEV("img", { src: `https://images.websim.com/avatar/${username}`, alt: "", width: "56", height: "56", style: { borderRadius: 12, border: "1px solid var(--border)" } }, void 0, false, {
+    /* @__PURE__ */ jsxDEV("div", { className: "row", style: { justifyContent: "space-between", marginBottom: 16 }, children: /* @__PURE__ */ jsxDEV("div", { className: "row", style: { gap: 12 }, children: [
+      /* @__PURE__ */ jsxDEV("img", { src: `https://images.websim.com/avatar/${username}`, alt: "", width: "56", height: "56", style: { borderRadius: 12, border: "1px solid var(--border)" } }, void 0, false, {
+        fileName: "<stdin>",
+        lineNumber: 256,
+        columnNumber: 11
+      }, this),
+      /* @__PURE__ */ jsxDEV("div", { children: [
+        /* @__PURE__ */ jsxDEV("div", { style: { fontWeight: 700 }, children: p?.display_name || username }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 256,
-          columnNumber: 11
+          lineNumber: 258,
+          columnNumber: 13
         }, this),
-        /* @__PURE__ */ jsxDEV("div", { children: [
-          /* @__PURE__ */ jsxDEV("div", { style: { fontWeight: 700 }, children: p?.display_name || username }, void 0, false, {
-            fileName: "<stdin>",
-            lineNumber: 258,
-            columnNumber: 13
-          }, this),
-          /* @__PURE__ */ jsxDEV("div", { className: "small", children: [
-            "@",
-            username
-          ] }, void 0, true, {
-            fileName: "<stdin>",
-            lineNumber: 259,
-            columnNumber: 13
-          }, this)
+        /* @__PURE__ */ jsxDEV("div", { className: "small", children: [
+          "@",
+          username
         ] }, void 0, true, {
           fileName: "<stdin>",
-          lineNumber: 257,
-          columnNumber: 11
+          lineNumber: 259,
+          columnNumber: 13
         }, this)
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 255,
-        columnNumber: 9
-      }, this),
-      /* @__PURE__ */ jsxDEV("button", { className: "btn ghost", onClick: onBack, children: "Back" }, void 0, false, {
-        fileName: "<stdin>",
-        lineNumber: 262,
-        columnNumber: 9
+        lineNumber: 257,
+        columnNumber: 11
       }, this)
     ] }, void 0, true, {
+      fileName: "<stdin>",
+      lineNumber: 255,
+      columnNumber: 9
+    }, this) }, void 0, false, {
       fileName: "<stdin>",
       lineNumber: 254,
       columnNumber: 7
     }, this),
     p?.bio && /* @__PURE__ */ jsxDEV("p", { className: "small", style: { marginTop: 0 }, children: p.bio }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 264,
+      lineNumber: 263,
       columnNumber: 18
     }, this),
     /* @__PURE__ */ jsxDEV("hr", { className: "hr" }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 265,
+      lineNumber: 264,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ jsxDEV("h2", { className: "h2", children: "Uploads" }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 266,
+      lineNumber: 265,
       columnNumber: 7
     }, this),
     loading ? /* @__PURE__ */ jsxDEV("div", { className: "small", children: "Loading\u2026" }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 267,
+      lineNumber: 266,
       columnNumber: 18
     }, this) : /* @__PURE__ */ jsxDEV("div", { className: "card-grid", children: vids.map(
       (v) => /* @__PURE__ */ jsxDEV(VideoCard, { v, canEdit: current && current.id === v.user_id, onEdit: () => {
       }, onDelete: () => {
       } }, v.id, false, {
         fileName: "<stdin>",
-        lineNumber: 270,
+        lineNumber: 269,
         columnNumber: 13
       }, this)
     ) }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 268,
+      lineNumber: 267,
       columnNumber: 9
     }, this),
     current && userId && current.id === userId && /* @__PURE__ */ jsxDEV(Fragment, { children: [
       /* @__PURE__ */ jsxDEV("button", { className: "btn fab", onClick: () => setEditOpen(true), children: "\u270E Edit Profile" }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 275,
+        lineNumber: 274,
         columnNumber: 11
       }, this),
       /* @__PURE__ */ jsxDEV(ProfileModal, { open: editOpen, onClose: () => setEditOpen(false) }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 276,
+        lineNumber: 275,
         columnNumber: 11
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 274,
+      lineNumber: 273,
       columnNumber: 9
     }, this)
   ] }, void 0, true, {
@@ -652,13 +645,21 @@ function Main() {
         onOpenProfile: () => {
           if (!user) return;
           setMyProfileOpen(true);
+        },
+        onGoHome: () => {
+          if (profileUsername) {
+            const base = window.baseUrl || window.location.origin + window.location.pathname;
+            window.location.href = base;
+          } else {
+            setMyProfileOpen(false);
+          }
         }
       },
       void 0,
       false,
       {
         fileName: "<stdin>",
-        lineNumber: 325,
+        lineNumber: 324,
         columnNumber: 7
       },
       this
@@ -680,7 +681,7 @@ function Main() {
       false,
       {
         fileName: "<stdin>",
-        lineNumber: 335,
+        lineNumber: 342,
         columnNumber: 9
       },
       this
@@ -688,89 +689,89 @@ function Main() {
       /* @__PURE__ */ jsxDEV("div", { className: "section", children: [
         /* @__PURE__ */ jsxDEV("h2", { className: "h2", children: "Regular Videos" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 349,
+          lineNumber: 356,
           columnNumber: 13
         }, this),
         loading ? /* @__PURE__ */ jsxDEV("div", { className: "small", children: "Loading\u2026" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 350,
+          lineNumber: 357,
           columnNumber: 24
         }, this) : /* @__PURE__ */ jsxDEV("div", { className: "card-grid", children: regular.map(
           (v) => /* @__PURE__ */ jsxDEV(VideoCard, { v, canEdit: user && user.id === v.user_id, onEdit: setEditVideo, onDelete }, v.id, false, {
             fileName: "<stdin>",
-            lineNumber: 353,
+            lineNumber: 360,
             columnNumber: 19
           }, this)
         ) }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 351,
+          lineNumber: 358,
           columnNumber: 15
         }, this)
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 348,
+        lineNumber: 355,
         columnNumber: 11
       }, this),
       /* @__PURE__ */ jsxDEV("div", { className: "section", children: [
         /* @__PURE__ */ jsxDEV("h2", { className: "h2", children: "Shorts" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 358,
+          lineNumber: 365,
           columnNumber: 13
         }, this),
         loading ? /* @__PURE__ */ jsxDEV("div", { className: "small", children: "Loading\u2026" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 359,
+          lineNumber: 366,
           columnNumber: 24
         }, this) : /* @__PURE__ */ jsxDEV("div", { className: "card-grid", children: shorts.map(
           (v) => /* @__PURE__ */ jsxDEV(VideoCard, { v, canEdit: user && user.id === v.user_id, onEdit: setEditVideo, onDelete }, v.id, false, {
             fileName: "<stdin>",
-            lineNumber: 362,
+            lineNumber: 369,
             columnNumber: 19
           }, this)
         ) }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 360,
+          lineNumber: 367,
           columnNumber: 15
         }, this)
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 357,
+        lineNumber: 364,
         columnNumber: 11
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 347,
+      lineNumber: 354,
       columnNumber: 9
     }, this),
     /* @__PURE__ */ jsxDEV(UploadModal, { open: showUpload, onClose: () => setShowUpload(false) }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 368,
+      lineNumber: 375,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ jsxDEV(ProfileModal, { open: showProfile, onClose: () => setShowProfile(false) }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 369,
+      lineNumber: 376,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ jsxDEV(EditVideoModal, { open: !!editVideo, onClose: () => setEditVideo(null), video: editVideo }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 370,
+      lineNumber: 377,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ jsxDEV(DeleteConfirmModal, { open: !!delVideo, onClose: () => setDelVideo(null), onConfirm: confirmDelete, title: delVideo?.title }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 371,
+      lineNumber: 378,
       columnNumber: 7
     }, this)
   ] }, void 0, true, {
     fileName: "<stdin>",
-    lineNumber: 324,
+    lineNumber: 323,
     columnNumber: 5
   }, this);
 }
 const root = createRoot(document.getElementById("root"));
 root.render(/* @__PURE__ */ jsxDEV(Main, {}, void 0, false, {
   fileName: "<stdin>",
-  lineNumber: 377,
+  lineNumber: 384,
   columnNumber: 13
 }));
