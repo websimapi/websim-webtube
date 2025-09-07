@@ -1,0 +1,27 @@
+{
+  "database": {
+    "schema": {
+      "profiles": {
+        "id": { "type": "text", "description": "user_id as primary key" },
+        "display_name": { "type": "text" },
+        "bio": { "type": "text" },
+        "channel": { "type": "jsonb", "description": "misc channel settings" }
+      },
+      "videos": {
+        "id": { "type": "uuid" },
+        "title": { "type": "text" },
+        "description": { "type": "text" },
+        "url": { "type": "text" },
+        "type": { "type": "text", "description": "'video' | 'short'" },
+        "duration_seconds": { "type": "integer" },
+        "tags": { "type": "jsonb", "description": "array of strings" }
+      },
+      "leaderboard": {
+        "id": { "type": "text", "description": "user_id as primary key (one row per user)" },
+        "data": { "type": "jsonb", "description": "aggregates like totals, latest uploads etc." }
+      }
+    },
+    "instructions": "profiles.id and leaderboard.id should be set to the current user's id to enforce single-row ownership. videos.tags is a JSON array of strings. videos.type is either 'video' or 'short'."
+  }
+}
+
